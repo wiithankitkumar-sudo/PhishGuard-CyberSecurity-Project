@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PhishGuard | URL Security Analyzer</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
+
+<body>
+
+    <header class="topbar">
+        <div class="brand">
+            <span class="shield">🛡️</span>
+            <span>PhishGuard</span>
+        </div>
+
+        <span class="badge">CYBER SECURITY LAB</span>
+    </header>
+
+    <main class="container">
+
+        <section class="hero">
+            <p class="eyebrow">URL SECURITY ANALYSIS</p>
+
+            <h1>Check Before You <span>Click.</span></h1>
+
+            <p class="subtitle">
+                Analyze URLs for potentially suspicious indicators
+                using a Python-powered security tool.
+            </p>
+        </section>
+
+        <section class="scanner card">
+            <h2>Analyze a URL</h2>
+
+            <p class="muted">
+                Enter a website URL to inspect its basic characteristics.
+            </p>
+
+            <form method="POST">
+                <label for="url">Website URL</label>
+
+                <div class="input-row">
+                    <input
+                        type="text"
+                        id="url"
+                        name="url"
+                        placeholder="https://example.com"
+                        value="{{ entered_url }}"
+                        required
+                    >
+
+                    <button type="submit">Analyze URL ↗</button>
+                </div>
+            </form>
+
+            <p class="hint">
+                Educational analysis only. Avoid entering private URLs
+                containing passwords, tokens, or personal information.
+            </p>
+        </section>
+
+        {% if result %}
+
+            {% if not result.valid %}
+
+                <section class="card error">
+                    <h2>Unable to Analyze URL</h2>
+                    <p>{{ result.error }}</p>
+                </section>
+
+            {% else %}
+
+                <section class="result card">
+
+                    <div class="result-heading">
+                        <div>
+                            <p class="eyebrow">ANALYSIS RESULT</p>
+                            <h2>URL Security Report</h2>
+                        </div>
+
+                        <span class="risk risk-{{ result.risk|lower }}">
+                            {{ result.risk }} Risk
+                        </span>
+                    </div>
+
+                    <div class="score-section">
+                        <div class="score-number">
+                            {{ result.score }}<span>/100</span>
+                        </div>
+
+                        <div class="score-info">
+                            <h3>Heuristic Risk Score</h3>
+                            <p>
+                                Higher scores indicate more configured
+                                suspicious indicators.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="progress">
+                        <div
+                            class="progress-fill"
+                            style="width: {{ result.score }} % ; ">
+                        </div>
+                    </div>
+
+                    <div class="details">
+                        <div class="detail-box">
+                            <span>Protocol</span>
+                            <strong>
+                                {{ "HTTPS" if result.https else "HTTP" }}
+                            </strong>
+                        </div>
+
+                        <div class="detail-box">
+                            <span>Hostname</span>
+                            <strong>{{ result.hostname }}</strong>
+                        </div>
+                    </div>
+
+                    <h3 class="findings-title">Detected Indicators</h3>
+
+                    <ul class="findings">
+                        {% for finding in result.findings %}
+                            <li>{{ finding }}</li>
+                        {% endfor %}
+                    </ul>
+
+                    <p class="disclaimer">
+                        This score is not a malware verdict.
+                        Low risk does not guarantee that a website is safe.
+                        No live reputation or malware database was checked.
+                    </p>
+
+                </section>
+
+            {% endif %}
+
+        {% endif %}
+
+        <section class="notice">
+            <strong>Security Tip</strong>
+            <p>
+                Never enter passwords or banking information on a website
+                unless you have independently verified its authenticity.
+            </p>
+        </section>
+
+    </main>
+
+    <footer>
+        PhishGuard · Python & Cyber Security Internship Project
+    </footer>
+
+</body>
+</html>
